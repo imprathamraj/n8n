@@ -1,0 +1,142 @@
+{
+  "name": "Update Email",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "authentication": "airtableTokenApi",
+        "baseId": {
+          "__rl": true,
+          // This baseId URL should be updated by your desired base to reflect the new Airtable base for employee information
+          "value": "https://airtable.com/appCoByi0odAAUeNk/tblEaepgdq0LuSdqc/viwQA8oQ96xlbpNpe",
+          "mode": "url"
+        },
+        "tableId": {
+          "__rl": true,
+          // This tableId URL should be updated by your desired table to reflect the new Airtable table for employee information
+          "value": "https://airtable.com/appCoByi0odAAUeNk/tblEaepgdq0LuSdqc/viwQA8oQ96xlbpNpe",
+          "mode": "url"
+        },
+        "triggerField": "Employee ID",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.airtableTrigger",
+      "typeVersion": 1,
+      "position": [272, 80],
+      "id": "cf519c91-e0ad-4e5f-9e45-6eee5eb887d7",
+      "name": "Airtable Trigger",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "TkonijYQc6mKuZ0S",
+          "name": "Airtable Personal Access Token account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "responses": {
+          "values": [
+            {
+              // The prompt has been updated to focus on employee information for HR, you can update it according to your needs.
+              "content": "=You are responsible for managing employee information. Your task is to collect incoming data about employees and create a clear summary that will be sent via email to the HR team. The email should be signed with \"HR Team\". Make a clean body with a new line if need via using <br> tag.\nReturn ONLY valid JSON (without any Markdown or backticks) in this exact format:\n{\n\"email_subject\": \"\",\n\"email_body\": \"\"\n}\nemail_subject: A short subject summarizing the employee details.\nemail_body: A clean, professional email with proper line breaks.\nHere are the details of the employee:\n\nEmployee Name: {{ $json.fields['Employee Name'] }}\nEmployee ID: {{ $json.fields['Employee ID'] }}\nEmail ID: {{ $json.fields['Email ID'] }}\nCurrent Status: {{ $json.fields['Current Status'] }}\n\nSign the email with \"HR Team\"."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_object"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [496, 80],
+      "id": "1f8df56c-4ebd-4de7-add5-17b7bc22feb0",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "9ND3CdOB5Qj51bko",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        // Make sure to replace this mail
+        "sendTo": "sendToEmail@email.com",
+        "subject": "={{ $json.output[0].content[0].text.email_subject }}",
+        "message": "={{ $json.output[0].content[0].text.email_body }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [848, 80],
+      "id": "3809efb1-b8f4-4719-8e64-8ec5ff367d11",
+      "name": "Send a message",
+      "webhookId": "cce919f8-dc60-4548-a26c-0672214b284e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "UHoJfJlDjZTfzyMF",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Airtable Trigger": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "Asia/Kolkata"
+  },
+  "versionId": "c98fd00d-16cd-423f-8518-46b72185f481",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "05f628c50a8fc2c1e36ec0516c5bd6d277f873b65c8c0436843394c74e3b7dab"
+  },
+  "id": "EBfN90SMMnb4b7dS",
+  "tags": []
+}
