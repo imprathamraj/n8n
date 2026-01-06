@@ -13,11 +13,13 @@
         "authentication": "airtableTokenApi",
         "baseId": {
           "__rl": true,
+          // This baseId URL should be updated by your desired base to reflect the new Airtable base for employee information
           "value": "https://airtable.com/appCoByi0odAAUeNk/tblEaepgdq0LuSdqc/viwQA8oQ96xlbpNpe",
           "mode": "url"
         },
         "tableId": {
           "__rl": true,
+          // This tableId URL should be updated by your desired table to reflect the new Airtable table for employee information
           "value": "https://airtable.com/appCoByi0odAAUeNk/tblEaepgdq0LuSdqc/viwQA8oQ96xlbpNpe",
           "mode": "url"
         },
@@ -47,6 +49,7 @@
         "responses": {
           "values": [
             {
+              // The prompt has been updated to focus on employee information for HR, you can update it according to your needs.
               "content": "=You are responsible for managing employee information. Your task is to collect incoming data about employees and create a clear summary that will be sent via email to the HR team. The email should be signed with \"HR Team\". Make a clean body with a new line if need via using <br> tag.\nReturn ONLY valid JSON (without any Markdown or backticks) in this exact format:\n{\n\"email_subject\": \"\",\n\"email_body\": \"\"\n}\nemail_subject: A short subject summarizing the employee details.\nemail_body: A clean, professional email with proper line breaks.\nHere are the details of the employee:\n\nEmployee Name: {{ $json.fields['Employee Name'] }}\nEmployee ID: {{ $json.fields['Employee ID'] }}\nEmail ID: {{ $json.fields['Email ID'] }}\nCurrent Status: {{ $json.fields['Current Status'] }}\n\nSign the email with \"HR Team\"."
             }
           ]
@@ -74,6 +77,7 @@
     },
     {
       "parameters": {
+        // Make sure to replace this mail
         "sendTo": "sendToEmail@email.com",
         "subject": "={{ $json.output[0].content[0].text.email_subject }}",
         "message": "={{ $json.output[0].content[0].text.email_body }}",
